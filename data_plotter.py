@@ -1,8 +1,5 @@
 # importing required libraries
 import plotly.graph_objects as go
-
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
 import pandas as pd
 
 df = pd.read_csv("data.csv")
@@ -10,27 +7,29 @@ df = df.dropna()
 df.columns = ["id"] + list(df.columns[1:])
 
 df = df[df.columns[:-1]]
-print(df)
-# creating figure
-fig = plt.figure()
-ax = fig.add_subplot(projection="3d")
 
-c = df[df.columns[1]] < 60
-cmap = "coolwarm"
-# creating the plot
-plot = ax.scatter(
-    df[df.columns[1]], df[df.columns[2]], df[df.columns[3]], c=c, cmap=cmap
+df["colorScale"] = df.apply(lambda row: 1 if row[df.columns[1]] < 60 else 0, axis=1)
+
+fig = go.Figure(
+    data=[
+        go.Scatter3d(
+            x=df[df.columns[1]],
+            y=df[df.columns[2]],
+            z=df[df.columns[3]],
+            hovertemplate="<b>%{text}</b><extra></extra>",
+            text=[title for title in df[df.columns[0]]],
+            mode="markers",
+            marker=dict(size=4, color=df["colorScale"], colorscale="Jet", opacity=0.8),
+        )
+    ]
 )
 
-# setting title and labels
-ax.set_title("Correlation plot")
-ax.set_xlabel(df.columns[1])
-ax.set_ylabel(df.columns[2])
-ax.set_zlabel(df.columns[3])
+fig.update_layout(
+    scene=dict(
+        xaxis_title=df.columns[1], yaxis_title=df.columns[2], zaxis_title=df.columns[3]
+    ),
+    width=700,
+    margin=dict(r=20, b=10, l=10, t=10),
+)
 
-ax.set(xlim=(0, 200), ylim=(0, 120), zlim=(0, 250))
-
-# ax.text(df[df.columns[1]], df[df.columns[2]], df[df.columns[3]], df[df.columns[0]])
-
-# displaying the plot
-plt.show()
+fig.show()
