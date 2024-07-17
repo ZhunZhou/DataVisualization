@@ -7,7 +7,7 @@ def find_seq(path: str, num_tabs: int):
         skip = 0 if i == 0 else 1
         df = pd.read_csv(path, usecols=[3* i +skip], skiprows=1)
         df.columns =["gene"]
-        
+        df.dropna(axis=0, inplace=True)
         df[TABS[i]] = 1
         print(df)
 
