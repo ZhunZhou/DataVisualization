@@ -4,7 +4,7 @@ TABS = ["AR comp","RT2657","RT2665","RT2702","RT2721","RT2789","RT2791"]
 def find_seq(path: str, num_tabs: int):
     final_df = None
     for i in range(int(num_tabs)):
-        skip = 0 if i == 0 else 1
+        skip = i 
         df = pd.read_csv(path, usecols=[3* i +skip], skiprows=1)
         df.columns =["gene"]
         df.dropna(axis=0, inplace=True)
